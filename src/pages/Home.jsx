@@ -19,7 +19,7 @@ const Home = () => {
                         <Link to="/docs" className="btn btn-primary">
                             Get Started <ArrowRight size={18} style={{ verticalAlign: 'middle', marginLeft: '5px' }} />
                         </Link>
-                        <a href="https://github.com" className="btn btn-secondary">View on GitHub</a>
+                        <a href="https://github.com/shakibstu/MediatRR" className="btn btn-secondary">View on GitHub</a>
                     </div>
                 </div>
             </section>
