@@ -8,7 +8,7 @@ const Navbar = () => {
       <Link to="/" className="nav-brand">MediatRR</Link>
       <div className="nav-links">
         <Link to="/docs" className="nav-link">Documentation</Link>
-        <a href="https://github.com/yourusername/MediatRR" target="_blank" rel="noopener noreferrer" className="nav-link">
+        <a href="https://github.com/shakibstu/MediatRR" target="_blank" rel="noopener noreferrer" className="nav-link">
           <Github size={20} />
         </a>
       </div>
