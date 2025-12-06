@@ -9,6 +9,9 @@ var builder = WebApplication.CreateBuilder(args);
 // Auto-register all request handlers in the assembly
 builder.Services.AutoRegisterRequestHandlers();
 
+// Auto-register all stream handlers in the assembly
+builder.Services.AutoRegisterStreamHandlers();
+
 var app = builder.Build();`;
 
     const handlerCode = `// Just implement IRequestHandler - no manual registration needed!
@@ -50,7 +53,7 @@ namespace MediatRR.ServiceGenerator
             <h1>Auto-Registration</h1>
             <p>
                 MediatRR includes a source generator that automatically discovers and registers all
-                request handlers in your assembly. This eliminates the need for manual registration
+                request and stream handlers in your assembly. This eliminates the need for manual registration
                 and reduces boilerplate code.
             </p>
 
@@ -62,7 +65,7 @@ namespace MediatRR.ServiceGenerator
 
             <h2>Usage</h2>
             <p>
-                Simply call <code>AutoRegisterRequestHandlers()</code> on your service collection:
+                Simply call <code>AutoRegisterRequestHandlers()</code> or <code>AutoRegisterStreamHandlers()</code> on your service collection:
             </p>
             <CodeBlock code={basicUsageCode} />
 
