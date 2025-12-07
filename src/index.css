@@ -3,8 +3,10 @@
   --bg-secondary: #1e293b;
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
-  --accent-primary: #8b5cf6; /* Violet */
-  --accent-secondary: #3b82f6; /* Blue */
+  --accent-primary: #8b5cf6;
+  /* Violet */
+  --accent-secondary: #3b82f6;
+  /* Blue */
   --accent-glow: rgba(139, 92, 246, 0.5);
   --border-color: #334155;
   --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
@@ -36,18 +38,38 @@ a:hover {
 }
 
 /* Typography */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--text-primary);
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 1rem;
 }
 
-h1 { font-size: 3rem; letter-spacing: -0.02em; }
-h2 { font-size: 2rem; letter-spacing: -0.01em; margin-top: 2rem; }
-h3 { font-size: 1.5rem; margin-top: 1.5rem; }
+h1 {
+  font-size: 3rem;
+  letter-spacing: -0.02em;
+}
 
-p { margin-bottom: 1rem; color: var(--text-secondary); }
+h2 {
+  font-size: 2rem;
+  letter-spacing: -0.01em;
+  margin-top: 2rem;
+}
+
+h3 {
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+p {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
 
 code {
   font-family: var(--font-mono);
@@ -98,6 +120,7 @@ pre code {
   font-weight: 800;
   background: linear-gradient(to right, var(--accent-primary), var(--accent-secondary));
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -126,6 +149,7 @@ pre code {
   margin-bottom: 1.5rem;
   background: linear-gradient(to right, #fff, #cbd5e1);
   -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
@@ -183,7 +207,8 @@ pre code {
   color: var(--text-secondary);
 }
 
-.sidebar-link:hover, .sidebar-link.active {
+.sidebar-link:hover,
+.sidebar-link.active {
   color: var(--accent-primary);
 }
 
@@ -307,4 +332,58 @@ pre code {
   .navbar {
     padding: 1rem;
   }
+}
+
+/* Footer */
+.footer {
+  background: var(--bg-primary);
+  border-top: 1px solid var(--border-color);
+  margin-top: auto;
+  padding: 2rem 0 0;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.footer-section h4 {
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+}
+
+.footer-link {
+  display: flex;
+  align-items: center;
+  color: var(--text-secondary);
+  margin-bottom: 0.25rem;
+  transition: color 0.2s;
+  font-size: 0.9rem;
+}
+
+.footer-link:hover {
+  color: var(--accent-primary);
+}
+
+.footer-bottom {
+  background: var(--bg-secondary);
+  padding: 1rem 0;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-color);
+}
+
+/* App Layout */
+.app-layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
 }
