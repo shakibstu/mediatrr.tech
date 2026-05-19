@@ -32,9 +32,21 @@ var mediator = provider.GetRequiredService<IMediator>();`;
             <h2>Basic Setup</h2>
             <p>
                 Register MediatRR in your dependency injection container. The library requires
-                a configuration action and a dead-letter queue for handling failed notifications.
+                a configuration action and a non-null dead-letter queue for handling failed notifications.
             </p>
             <CodeBlock code={setupCode} />
+
+            <div className="card" style={{ marginTop: '1.5rem', background: 'rgba(59, 130, 246, 0.08)', borderColor: 'var(--accent-secondary)' }}>
+                <h3>🔍 Lifetime &amp; scoping</h3>
+                <p style={{ marginBottom: 0 }}>
+                    <code>IMediator</code> is registered as a singleton. Each <code>Send</code>,{' '}
+                    <code>Publish</code>, and <code>CreateStream</code> call opens its own DI scope
+                    so scoped dependencies (e.g. a per-request <code>DbContext</code>) work as expected;
+                    that scope is shared between pipeline behaviors and the handler. For{' '}
+                    <code>CreateStream</code> the scope lives until the returned{' '}
+                    <code>IAsyncEnumerable</code> is fully enumerated or its enumerator is disposed.
+                </p>
+            </div>
 
             <h2>Configuration Options</h2>
             <p>The <code>AddMediatRR</code> method accepts a configuration action with the following options:</p>

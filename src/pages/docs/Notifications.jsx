@@ -30,12 +30,15 @@ public class UpdateInventoryHandler : INotificationHandler<OrderPlaced>
 var retryPolicy = new NotificationRetryPolicy
 {
     MaxRetryAttempts = 3,
-    RetryDelayMilliseconds = 1000
+    DelayBetweenRetries = TimeSpan.FromSeconds(1)
 };
 
 services.AddNotificationHandler<OrderPlaced, SendEmailHandler>(retryPolicy);
 services.AddNotificationHandler<OrderPlaced, UpdateInventoryHandler>(retryPolicy);
-services.AddNotificationHandler<OrderPlaced, LogOrderHandler>(null); // No retry for logging`;
+
+// Omit the policy (or pass null) to use NotificationRetryPolicy.Default
+// — zero retries, no delay.
+services.AddNotificationHandler<OrderPlaced, LogOrderHandler>();`;
 
     const publishCode = `var mediator = provider.GetRequiredService<IMediator>();
 
@@ -49,7 +52,7 @@ await mediator.Publish(new OrderPlaced
     const retryPolicyCode = `var retryPolicy = new NotificationRetryPolicy
 {
     MaxRetryAttempts = 3,
-    RetryDelayMilliseconds = 1000
+    DelayBetweenRetries = TimeSpan.FromSeconds(1)
 };
 
 services.AddNotificationHandler<OrderPlaced, SendEmailHandler>(retryPolicy);`;
@@ -102,6 +105,16 @@ services.AddNotificationHandler<OrderPlaced, SendEmailHandler>(retryPolicy);`;
                 You can configure retry behavior for individual notification handlers:
             </p>
             <CodeBlock code={retryPolicyCode} />
+
+            <div className="card" style={{ marginTop: '1.5rem', background: 'rgba(234, 179, 8, 0.08)', borderColor: 'rgba(234, 179, 8, 0.4)' }}>
+                <h3>⚠️ One policy per notification type</h3>
+                <p style={{ marginBottom: 0 }}>
+                    All handlers for the same notification share a single retry policy. Registering
+                    conflicting policies for the same notification type throws{' '}
+                    <code>InvalidOperationException</code> when the resiliency provider is resolved.
+                    Registering the same (or equivalent) policy more than once is fine.
+                </p>
+            </div>
 
             <div className="card" style={{ marginTop: '2rem', background: 'rgba(59, 130, 246, 0.1)', borderColor: 'var(--accent-secondary)' }}>
                 <h3>💡 Use Cases</h3>
