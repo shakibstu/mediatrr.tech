@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 import Sidebar from '../components/Sidebar';
+import DocPage from '../components/DocPage';
+import NotFound from './NotFound';
+
 import Introduction from './docs/Introduction';
 import Installation from './docs/Installation';
 import BasicUsage from './docs/BasicUsage';
@@ -12,6 +15,20 @@ import AutoRegistration from './docs/AutoRegistration';
 import Requests from './docs/Requests';
 import Streams from './docs/Streams';
 import StreamBehaviors from './docs/StreamBehaviors';
+
+// Pair the data-driven nav with the actual React components.
+const PAGES = {
+    'introduction': Introduction,
+    'installation': Installation,
+    'basic-usage': BasicUsage,
+    'requests': Requests,
+    'streams': Streams,
+    'notifications': Notifications,
+    'behaviors': Behaviors,
+    'notification-behaviors': NotificationBehaviors,
+    'stream-behaviors': StreamBehaviors,
+    'auto-registration': AutoRegistration,
+};
 
 const Docs = () => {
     const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -37,16 +54,14 @@ const Docs = () => {
             <main className="content">
                 <Routes>
                     <Route path="/" element={<Navigate to="/docs/introduction" replace />} />
-                    <Route path="/introduction" element={<Introduction />} />
-                    <Route path="/installation" element={<Installation />} />
-                    <Route path="/basic-usage" element={<BasicUsage />} />
-                    <Route path="/behaviors" element={<Behaviors />} />
-                    <Route path="/notifications" element={<Notifications />} />
-                    <Route path="/notification-behaviors" element={<NotificationBehaviors />} />
-                    <Route path="/auto-registration" element={<AutoRegistration />} />
-                    <Route path="/requests" element={<Requests />} />
-                    <Route path="/streams" element={<Streams />} />
-                    <Route path="/stream-behaviors" element={<StreamBehaviors />} />
+                    {Object.entries(PAGES).map(([slug, Component]) => (
+                        <Route
+                            key={slug}
+                            path={`/${slug}`}
+                            element={<DocPage slug={slug}><Component /></DocPage>}
+                        />
+                    ))}
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </main>
         </div>
