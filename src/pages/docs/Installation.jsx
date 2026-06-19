@@ -39,7 +39,7 @@ var mediator = provider.GetRequiredService<IMediator>();`;
             <div className="card" style={{ marginTop: '1.5rem', background: 'rgba(59, 130, 246, 0.08)', borderColor: 'var(--accent-secondary)' }}>
                 <h3>🔍 Lifetime &amp; scoping</h3>
                 <p style={{ marginBottom: 0 }}>
-                    <code>IMediator</code> is registered as a singleton. <code>Send</code> and{' '}
+                    <code>IMediator</code> is registered as transient. <code>Send</code> and{' '}
                     <code>CreateStream</code> each open their own DI scope — shared between the pipeline
                     behaviors and the handler — so scoped dependencies (e.g. a per-request{' '}
                     <code>DbContext</code>) work as expected. For <code>CreateStream</code> that scope
