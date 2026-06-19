@@ -51,7 +51,7 @@ var mediator = provider.GetRequiredService<IMediator>();`;
             <h2>Configuration Options</h2>
             <p>The <code>AddMediatRR</code> method accepts a configuration action with the following options:</p>
             <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem' }}>
-                <li><code>NotificationChannelSize</code>: The size of the notification channel buffer (default: 100)</li>
+                <li><code>NotificationChannelSize</code>: The size of the notification channel buffer (default: 10,000)</li>
                 <li><code>MaxConcurrentMessageConsumer</code>: Maximum concurrent notification handlers (default: 5)</li>
             </ul>
 
