@@ -39,19 +39,21 @@ var mediator = provider.GetRequiredService<IMediator>();`;
             <div className="card" style={{ marginTop: '1.5rem', background: 'rgba(59, 130, 246, 0.08)', borderColor: 'var(--accent-secondary)' }}>
                 <h3>🔍 Lifetime &amp; scoping</h3>
                 <p style={{ marginBottom: 0 }}>
-                    <code>IMediator</code> is registered as a singleton. Each <code>Send</code>,{' '}
-                    <code>Publish</code>, and <code>CreateStream</code> call opens its own DI scope
-                    so scoped dependencies (e.g. a per-request <code>DbContext</code>) work as expected;
-                    that scope is shared between pipeline behaviors and the handler. For{' '}
-                    <code>CreateStream</code> the scope lives until the returned{' '}
-                    <code>IAsyncEnumerable</code> is fully enumerated or its enumerator is disposed.
+                    <code>IMediator</code> is registered as transient. <code>Send</code> and{' '}
+                    <code>CreateStream</code> each open their own DI scope — shared between the pipeline
+                    behaviors and the handler — so scoped dependencies (e.g. a per-request{' '}
+                    <code>DbContext</code>) work as expected. For <code>CreateStream</code> that scope
+                    lives until the returned <code>IAsyncEnumerable</code> is fully enumerated or its
+                    enumerator is disposed. <code>Publish</code> opens a scope for its notification
+                    behaviors and then queues the notification; each handler runs later in the
+                    background worker, in its own per-message scope.
                 </p>
             </div>
 
             <h2>Configuration Options</h2>
             <p>The <code>AddMediatRR</code> method accepts a configuration action with the following options:</p>
             <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem' }}>
-                <li><code>NotificationChannelSize</code>: The size of the notification channel buffer (default: 100)</li>
+                <li><code>NotificationChannelSize</code>: The size of the notification channel buffer (default: 10,000)</li>
                 <li><code>MaxConcurrentMessageConsumer</code>: Maximum concurrent notification handlers (default: 5)</li>
             </ul>
 
