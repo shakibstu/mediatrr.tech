@@ -60,7 +60,7 @@ const Home = () => {
                     <FeatureCard
                         icon={<Zap size={32} color="var(--accent-primary)" />}
                         title="Fast by default"
-                        description="Reflection results are cached per request type; per-call cost is two dictionary lookups, not a full type construction."
+                        description="Each message type gets a strongly typed dispatcher that is built once and cached, so every call reaches your handler through its interface with no reflection-based invocation."
                     />
                     <FeatureCard
                         icon={<Shield size={32} color="var(--accent-secondary)" />}
@@ -70,7 +70,7 @@ const Home = () => {
                     <FeatureCard
                         icon={<Activity size={32} color="#10b981" />}
                         title="Resilient notifications"
-                        description="Async background worker with per-notification retry policies and a dead-letter queue so failures never disappear silently."
+                        description="Async background worker with per-handler retries, backpressure, graceful shutdown, and a dead-letter queue so failures never disappear silently."
                     />
                 </div>
             </section>
