@@ -9,7 +9,7 @@ export const SEARCH_INDEX = [
     {
         slug: 'installation',
         title: 'Installation',
-        keywords: 'install setup nuget dotnet add package addmediatrr dead letter queue concurrentqueue configuration channel size max concurrent consumer aspnet core scope singleton lifetime',
+        keywords: 'install setup nuget dotnet add package addmediatrr dead letter queue concurrentqueue configuration channel size max concurrent consumer aspnet core scope singleton lifetime requirements netstandard2.0 abstractions host hosted service worker StartAsync StopAsync backpressure validation ArgumentOutOfRangeException DeadLettersInfo AttemptCount LastAttemptedAt',
     },
     {
         slug: 'basic-usage',
@@ -19,17 +19,17 @@ export const SEARCH_INDEX = [
     {
         slug: 'requests',
         title: 'Requests & Handlers',
-        keywords: 'IRequest IRequestHandler Send response query command result void',
+        keywords: 'IRequest IRequestHandler Send response query command result void explicit interface implementation one class several request types exceptions unwrapped',
     },
     {
         slug: 'streams',
         title: 'Streams & Handlers',
-        keywords: 'IStreamRequest IStreamRequestHandler IAsyncEnumerable yield stream CreateStream',
+        keywords: 'IStreamRequest IStreamRequestHandler IAsyncEnumerable yield stream CreateStream explicit interface implementation',
     },
     {
         slug: 'notifications',
         title: 'Notifications',
-        keywords: 'INotification INotificationHandler Publish events dead letter retry policy MaxRetryAttempts DelayBetweenRetries one policy per notification type background worker channel async',
+        keywords: 'INotification INotificationHandler Publish events dead letter retry policy MaxRetryAttempts DelayBetweenRetries one policy per notification type background worker channel async per handler retry in place backpressure host required shutdown graceful forced StopAsync InvalidOperationException OperationCanceledException scope',
     },
     {
         slug: 'behaviors',
@@ -39,7 +39,7 @@ export const SEARCH_INDEX = [
     {
         slug: 'notification-behaviors',
         title: 'Notification Behaviors',
-        keywords: 'INotificationBehavior INotificationHandlerBehavior wrap publish handler order',
+        keywords: 'INotificationBehavior INotificationHandlerBehavior wrap publish handler order execution order queued background worker retry attempt filter',
     },
     {
         slug: 'stream-behaviors',
@@ -49,7 +49,12 @@ export const SEARCH_INDEX = [
     {
         slug: 'auto-registration',
         title: 'Auto-Registration',
-        keywords: 'source generator AutoRegisterRequestHandlers AutoRegisterStreamHandlers automatically register handlers',
+        keywords: 'source generator AutoRegisterRequestHandlers AutoRegisterStreamHandlers automatically register handlers records multiple interfaces nested internal abstract generic C# 7.3 netstandard2.0 sdk requirements generated code',
+    },
+    {
+        slug: 'migrating-to-2',
+        title: 'Migrating to 2.0',
+        keywords: 'migrate migration upgrade upgrading 2.0 2.0.0 breaking changes whats new release AddMediatRR MediatRRConfiguration AttemptCount ChannelClosedException InvalidOperationException per handler retry backpressure',
     },
 ];
 

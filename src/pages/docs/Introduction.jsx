@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const Introduction = () => {
     return (
@@ -9,6 +10,15 @@ const Introduction = () => {
                 It helps you decouple your application logic by providing a simple, elegant way
                 to send requests and publish notifications.
             </p>
+
+            <div className="card" style={{ marginTop: '1.5rem', background: 'rgba(139, 92, 246, 0.1)', borderColor: 'var(--accent-primary)' }}>
+                <h3>🎉 MediatRR 2.0</h3>
+                <p style={{ marginBottom: 0 }}>
+                    Version 2.0 makes notification processing safer: handlers are retried individually, keep their
+                    DI scope until they finish, and the queue now pushes back when it is full. It contains breaking
+                    changes; see <Link to="/docs/migrating-to-2">Migrating to 2.0</Link>.
+                </p>
+            </div>
 
             <h2>What is the Mediator Pattern?</h2>
             <p>

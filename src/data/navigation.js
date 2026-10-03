@@ -27,6 +27,12 @@ export const DOCS_SECTIONS = [
             { slug: 'auto-registration', label: 'Auto-Registration', file: 'AutoRegistration.jsx' },
         ],
     },
+    {
+        title: 'Upgrade Guides',
+        items: [
+            { slug: 'migrating-to-2', label: 'Migrating to 2.0', file: 'MigratingTo2.jsx' },
+        ],
+    },
 ];
 
 // Flat ordered list — used for prev/next and search.
