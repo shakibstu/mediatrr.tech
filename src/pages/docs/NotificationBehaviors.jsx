@@ -1,8 +1,9 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import CodeBlock from '../../components/CodeBlock';
 
 const NotificationBehaviors = () => {
-    const notificationBehaviorCode = `// Wraps the entire notification publishing process
+    const notificationBehaviorCode = `// Wraps the Publish call, around queuing the notification
 public class NotificationLoggingBehavior<TNotification> : INotificationBehavior<TNotification>
     where TNotification : INotification
 {
@@ -11,9 +12,9 @@ public class NotificationLoggingBehavior<TNotification> : INotificationBehavior<
         Func<Task> next, 
         CancellationToken cancellationToken = default)
     {
-        Console.WriteLine($"Before publishing {typeof(TNotification).Name}");
+        Console.WriteLine($"Publishing {typeof(TNotification).Name}");
         await next();
-        Console.WriteLine($"After publishing {typeof(TNotification).Name}");
+        Console.WriteLine($"Queued {typeof(TNotification).Name}");
     }
 }`;
 
@@ -41,13 +42,18 @@ services.AddTransient(typeof(INotificationBehavior<>),
 services.AddTransient(typeof(INotificationHandlerBehavior<>), 
     typeof(NotificationHandlerLoggingBehavior<>));`;
 
-    const executionOrderCode = `// Execution flow:
+    const executionOrderCode = `// Inside mediator.Publish(notification):
 // 1. NotificationBehavior (before)
-// 2. NotificationHandlerBehavior (before) → Handler 1
-// 3. NotificationHandlerBehavior (after)
-// 4. NotificationHandlerBehavior (before) → Handler 2
-// 5. NotificationHandlerBehavior (after)
-// 6. NotificationBehavior (after)`;
+// 2. The notification is queued for the background worker
+// 3. NotificationBehavior (after)
+//    Publish returns here, without waiting for the handlers.
+//
+// Later, in the background worker, for each handler
+// (handlers run concurrently, up to MaxConcurrentMessageConsumer):
+// 4. NotificationHandlerBehavior (before)
+// 5. Handler
+// 6. NotificationHandlerBehavior (after)
+//    Steps 4 to 6 repeat on every retry attempt of that handler.`;
 
     return (
         <div>
@@ -59,36 +65,41 @@ services.AddTransient(typeof(INotificationHandlerBehavior<>),
 
             <h2>INotificationBehavior</h2>
             <p>
-                <code>INotificationBehavior&lt;TNotification&gt;</code> wraps the entire notification
-                publishing process. It executes once per <code>Publish</code> call, before and after
-                all handlers are invoked.
+                <code>INotificationBehavior&lt;TNotification&gt;</code> wraps the publishing step. It runs once
+                per <code>Publish</code> call, inside <code>Publish</code>, around queuing the notification.
+                Handlers run later in the background worker, so this behavior finishes before they start and
+                never sees their outcome. If a behavior does not call <code>next()</code>, the notification is
+                not queued and no handler runs. Exceptions it throws reach the <code>Publish</code> caller.
             </p>
             <CodeBlock code={notificationBehaviorCode} />
 
             <div className="card" style={{ marginTop: '1rem', marginBottom: '2rem' }}>
                 <h4>Use Cases:</h4>
                 <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem', marginBottom: 0 }}>
-                    <li>Logging the notification event</li>
-                    <li>Performance monitoring for the entire publish operation</li>
-                    <li>Transaction management</li>
-                    <li>Global error handling</li>
+                    <li>Logging or auditing that a notification was published</li>
+                    <li>Validating or enriching a notification before it is queued</li>
+                    <li>Filtering: dropping notifications that should not be processed</li>
+                    <li>Metrics on how often notifications are published</li>
                 </ul>
             </div>
 
             <h2>INotificationHandlerBehavior</h2>
             <p>
                 <code>INotificationHandlerBehavior&lt;TNotification&gt;</code> wraps each individual
-                handler execution. It runs once for each handler that processes the notification.
+                handler execution. It runs in the background worker, inside the notification's DI scope, once
+                for every attempt of every handler, including retries. An exception it throws counts as a
+                failure of that handler: it is retried under the
+                notification's <Link to="/docs/notifications">retry policy</Link> and then dead-lettered.
             </p>
             <CodeBlock code={handlerBehaviorCode} />
 
             <div className="card" style={{ marginTop: '1rem', marginBottom: '2rem' }}>
                 <h4>Use Cases:</h4>
                 <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem', marginBottom: 0 }}>
-                    <li>Per-handler error handling</li>
-                    <li>Retry logic for individual handlers</li>
-                    <li>Handler-specific logging</li>
+                    <li>Per-handler logging and tracing</li>
                     <li>Performance tracking per handler</li>
+                    <li>Per-handler error handling or enrichment</li>
+                    <li>Setting up per-handler context, such as a correlation ID</li>
                 </ul>
             </div>
 
@@ -100,7 +111,8 @@ services.AddTransient(typeof(INotificationHandlerBehavior<>),
 
             <h2>Execution Order</h2>
             <p>
-                Understanding the execution flow is important when using both behavior types:
+                The two behavior types run at different times. Behaviors of the same type run in the order they
+                are registered, the first one outermost:
             </p>
             <CodeBlock code={executionOrderCode} language="javascript" />
 
@@ -118,16 +130,21 @@ services.AddTransient(typeof(INotificationHandlerBehavior<>),
                         <tr>
                             <td style={{ padding: '0.5rem' }}>Execution</td>
                             <td style={{ padding: '0.5rem' }}>Once per Publish</td>
-                            <td style={{ padding: '0.5rem' }}>Once per Handler</td>
+                            <td style={{ padding: '0.5rem' }}>Once per handler attempt</td>
                         </tr>
                         <tr>
-                            <td style={{ padding: '0.5rem' }}>Scope</td>
-                            <td style={{ padding: '0.5rem' }}>Entire publish operation</td>
-                            <td style={{ padding: '0.5rem' }}>Individual handler</td>
+                            <td style={{ padding: '0.5rem' }}>Runs in</td>
+                            <td style={{ padding: '0.5rem' }}>The Publish call, before the notification is queued</td>
+                            <td style={{ padding: '0.5rem' }}>The background worker, around each handler</td>
+                        </tr>
+                        <tr>
+                            <td style={{ padding: '0.5rem' }}>Exceptions</td>
+                            <td style={{ padding: '0.5rem' }}>Propagate to the Publish caller</td>
+                            <td style={{ padding: '0.5rem' }}>Retried with the handler, then dead-lettered</td>
                         </tr>
                         <tr>
                             <td style={{ padding: '0.5rem' }}>Best For</td>
-                            <td style={{ padding: '0.5rem' }}>Global concerns</td>
+                            <td style={{ padding: '0.5rem' }}>Concerns about publishing itself</td>
                             <td style={{ padding: '0.5rem' }}>Handler-specific concerns</td>
                         </tr>
                     </tbody>

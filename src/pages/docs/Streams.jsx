@@ -19,7 +19,7 @@ const Streams = () => {
     }
 }`;
 
-    const registrationCode = `// Register handler manualy
+    const registrationCode = `// Register handler manually
 services.AddStreamRequestHandler<StreamData, int, StreamDataHandler>();`;
 
     const usageCode = `var request = new StreamData { Count = 5 };
@@ -68,6 +68,7 @@ await foreach (var item in mediator.CreateStream(request))
                 <li><strong>Async Enumerable</strong>: Handlers return <code>IAsyncEnumerable</code></li>
                 <li><strong>Streaming</strong>: Data is yielded as it becomes available</li>
                 <li><strong>Cancellation</strong>: Supports <code>CancellationToken</code> for cancelling the stream</li>
+                <li><strong>Flexible Handler Classes</strong>: A handler can implement the interface explicitly, and one class can handle several stream request types</li>
             </ul>
         </div>
     );

@@ -80,6 +80,10 @@ code {
   color: var(--accent-primary);
 }
 
+.doc-table code {
+  overflow-wrap: anywhere;
+}
+
 pre {
   background: var(--bg-secondary);
   padding: 1.5rem;

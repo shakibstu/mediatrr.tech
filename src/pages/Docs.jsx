@@ -15,6 +15,7 @@ import AutoRegistration from './docs/AutoRegistration';
 import Requests from './docs/Requests';
 import Streams from './docs/Streams';
 import StreamBehaviors from './docs/StreamBehaviors';
+import MigratingTo2 from './docs/MigratingTo2';
 
 // Pair the data-driven nav with the actual React components.
 const PAGES = {
@@ -28,6 +29,7 @@ const PAGES = {
     'notification-behaviors': NotificationBehaviors,
     'stream-behaviors': StreamBehaviors,
     'auto-registration': AutoRegistration,
+    'migrating-to-2': MigratingTo2,
 };
 
 const Docs = () => {

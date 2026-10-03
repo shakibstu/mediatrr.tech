@@ -108,6 +108,8 @@ var orderId = await mediator.Send(new CreateOrderCommand
                 <li><strong>Type Safe</strong>: Request and response types are enforced at compile time</li>
                 <li><strong>Synchronous Execution</strong>: Requests are processed immediately and return a result</li>
                 <li><strong>Pipeline Support</strong>: Requests flow through pipeline behaviors before reaching the handler</li>
+                <li><strong>Flexible Handler Classes</strong>: A handler can implement the interface explicitly, and one class can handle several request types</li>
+                <li><strong>Unwrapped Exceptions</strong>: An exception thrown by a handler or behavior reaches the <code>Send</code> caller with its original type</li>
             </ul>
 
             <div className="card" style={{ marginTop: '2rem', background: 'rgba(139, 92, 246, 0.1)', borderColor: 'var(--accent-primary)' }}>
