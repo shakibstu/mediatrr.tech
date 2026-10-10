@@ -1,7 +1,9 @@
 import React, { useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 import { Github, Search } from 'lucide-react';
+import ThemeToggle from './ThemeToggle';
 import { MEDIATRR_VERSION } from '../data/version';
+import { NUGET_URL, REPO_URL } from '../data/site';
 
 const Navbar = ({ onSearchOpen }) => {
     useEffect(() => {
@@ -19,12 +21,12 @@ const Navbar = ({ onSearchOpen }) => {
     }, [onSearchOpen]);
 
     return (
-        <nav className="navbar">
+        <header className="navbar">
             <Link to="/" className="nav-brand">
-                MediatRR
+                <span className="nav-brand-text">MediatRR</span>
                 <span className="nav-version" aria-label={`Library version ${MEDIATRR_VERSION}`}>v{MEDIATRR_VERSION}</span>
             </Link>
-            <div className="nav-links">
+            <nav className="nav-links" aria-label="Primary">
                 <button
                     type="button"
                     className="nav-search-btn"
@@ -35,18 +37,30 @@ const Navbar = ({ onSearchOpen }) => {
                     <span>Search</span>
                     <kbd>/</kbd>
                 </button>
-                <Link to="/docs" className="nav-link">Documentation</Link>
+                <NavLink to="/docs" className={({ isActive }) => `nav-link${isActive ? ' active' : ''}`}>
+                    <span className="nav-link-long">Documentation</span>
+                    <span className="nav-link-short">Docs</span>
+                </NavLink>
                 <a
-                    href="https://github.com/shakibstu/MediatRR"
+                    href={NUGET_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="nav-link"
+                    className="nav-link nav-link-wide"
+                >
+                    NuGet
+                </a>
+                <ThemeToggle />
+                <a
+                    href={REPO_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="icon-btn"
                     aria-label="GitHub repository"
                 >
-                    <Github size={20} />
+                    <Github size={18} />
                 </a>
-            </div>
-        </nav>
+            </nav>
+        </header>
     );
 };
 

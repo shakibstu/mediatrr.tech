@@ -1,11 +1,10 @@
 import React, { useEffect, useRef, useState } from 'react';
 import Prism from 'prismjs';
 import { Check, Copy } from 'lucide-react';
-import 'prismjs/themes/prism-tomorrow.css';
 import 'prismjs/components/prism-csharp';
 import 'prismjs/components/prism-bash';
 
-const CodeBlock = ({ code, language = 'csharp' }) => {
+const CodeBlock = ({ code, language = 'csharp', title }) => {
     const codeRef = useRef(null);
     const [copied, setCopied] = useState(false);
 
@@ -16,11 +15,16 @@ const CodeBlock = ({ code, language = 'csharp' }) => {
         }
     }, [code, language]);
 
+    useEffect(() => {
+        if (!copied) return undefined;
+        const timer = setTimeout(() => setCopied(false), 1500);
+        return () => clearTimeout(timer);
+    }, [copied]);
+
     const handleCopy = async () => {
         try {
             await navigator.clipboard.writeText(code);
             setCopied(true);
-            setTimeout(() => setCopied(false), 1500);
         } catch {
             // Clipboard API can fail in non-secure contexts; surface to the user.
             setCopied(false);
@@ -28,7 +32,12 @@ const CodeBlock = ({ code, language = 'csharp' }) => {
     };
 
     return (
-        <div className="code-block">
+        <div className={`code-block${title ? ' has-title' : ''}`}>
+            {title && (
+                <div className="code-block-title">
+                    <span>{title}</span>
+                </div>
+            )}
             <button
                 className="code-copy-btn"
                 onClick={handleCopy}
@@ -38,7 +47,7 @@ const CodeBlock = ({ code, language = 'csharp' }) => {
                 {copied ? <Check size={14} /> : <Copy size={14} />}
                 <span>{copied ? 'Copied' : 'Copy'}</span>
             </button>
-            <pre>
+            <pre tabIndex={0}>
                 <code ref={codeRef} className={`language-${language}`}>
                     {code}
                 </code>

@@ -1,26 +1,19 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search } from 'lucide-react';
 import { searchDocs } from '../data/searchIndex';
+import { DOCS_FLAT } from '../data/navigation';
 import { useFocusTrap } from '../utils/useFocusTrap';
 
-const SearchModal = ({ isOpen, onClose }) => {
+const sectionOf = (slug) => DOCS_FLAT.find((doc) => doc.slug === slug)?.section;
+
+const SearchPanel = ({ onClose }) => {
     const [query, setQuery] = useState('');
     const [highlighted, setHighlighted] = useState(0);
     const containerRef = useRef(null);
-    const inputRef = useRef(null);
     const navigate = useNavigate();
 
-    useFocusTrap(containerRef, isOpen, onClose);
-
-    useEffect(() => {
-        if (isOpen) {
-            setQuery('');
-            setHighlighted(0);
-            // focus input after the trap moves focus to the first focusable element
-            queueMicrotask(() => inputRef.current?.focus());
-        }
-    }, [isOpen]);
+    useFocusTrap(containerRef, true, onClose);
 
     const results = searchDocs(query);
 
@@ -42,8 +35,6 @@ const SearchModal = ({ isOpen, onClose }) => {
         }
     };
 
-    if (!isOpen) return null;
-
     return (
         <div className="search-overlay" onClick={onClose}>
             <div
@@ -57,7 +48,6 @@ const SearchModal = ({ isOpen, onClose }) => {
                 <div className="search-input-wrapper">
                     <Search size={16} />
                     <input
-                        ref={inputRef}
                         type="text"
                         value={query}
                         onChange={(e) => { setQuery(e.target.value); setHighlighted(0); }}
@@ -65,11 +55,14 @@ const SearchModal = ({ isOpen, onClose }) => {
                         placeholder="Search the docs…"
                         aria-label="Search query"
                     />
-                    <button className="search-close" onClick={onClose} aria-label="Close search">Esc</button>
+                    <button type="button" className="search-close" onClick={onClose} aria-label="Close search">Esc</button>
                 </div>
                 <ul className="search-results">
                     {query && results.length === 0 && (
                         <li className="search-empty">No matches for “{query}”.</li>
+                    )}
+                    {!query && (
+                        <li className="search-empty">Try “retry policy”, “stream”, “Void” or “auto-registration”.</li>
                     )}
                     {results.map((r, idx) => (
                         <li key={r.slug}>
@@ -80,7 +73,7 @@ const SearchModal = ({ isOpen, onClose }) => {
                                 onClick={() => go(r.slug)}
                             >
                                 <strong>{r.title}</strong>
-                                <small>/docs/{r.slug}</small>
+                                <small>{sectionOf(r.slug)} · /docs/{r.slug}</small>
                             </button>
                         </li>
                     ))}
@@ -92,5 +85,7 @@ const SearchModal = ({ isOpen, onClose }) => {
         </div>
     );
 };
+
+const SearchModal = ({ isOpen, onClose }) => (isOpen ? <SearchPanel onClose={onClose} /> : null);
 
 export default SearchModal;

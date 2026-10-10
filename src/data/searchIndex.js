@@ -4,27 +4,27 @@ export const SEARCH_INDEX = [
     {
         slug: 'introduction',
         title: 'Introduction',
-        keywords: 'mediator pattern overview features CQRS clean architecture event-driven',
+        keywords: 'mediator pattern overview features CQRS clean architecture event-driven packages MediatRR.Contract contract interfaces free MIT license',
     },
     {
         slug: 'installation',
         title: 'Installation',
-        keywords: 'install setup nuget dotnet add package addmediatrr dead letter queue concurrentqueue configuration channel size max concurrent consumer aspnet core scope singleton lifetime requirements netstandard2.0 abstractions host hosted service worker StartAsync StopAsync backpressure validation ArgumentOutOfRangeException DeadLettersInfo AttemptCount LastAttemptedAt',
+        keywords: 'install setup nuget dotnet add package addmediatrr dead letter queue concurrentqueue configuration channel size max concurrent consumer aspnet core scope singleton lifetime requirements netstandard2.0 abstractions host hosted service worker StartAsync StopAsync backpressure validation ArgumentOutOfRangeException DeadLettersInfo AttemptCount LastAttemptedAt MediatRR.Contract packages using MediatRR',
     },
     {
         slug: 'basic-usage',
         title: 'Basic Usage',
-        keywords: 'getting started ping pong send request example AddRequestHandler hello world',
+        keywords: 'getting started ping pong send request example AddRequestHandler hello world program.cs console complete example',
     },
     {
         slug: 'requests',
         title: 'Requests & Handlers',
-        keywords: 'IRequest IRequestHandler Send response query command result void explicit interface implementation one class several request types exceptions unwrapped',
+        keywords: 'IRequest IRequestHandler Send response query command result void Void.Value Void.Task unit no response fire and forget alias System.Void explicit interface implementation one class several request types exceptions unwrapped InvalidOperationException no handler registered',
     },
     {
         slug: 'streams',
         title: 'Streams & Handlers',
-        keywords: 'IStreamRequest IStreamRequestHandler IAsyncEnumerable yield stream CreateStream explicit interface implementation',
+        keywords: 'IStreamRequest IStreamRequestHandler IAsyncEnumerable yield stream CreateStream explicit interface implementation EnumeratorCancellation cancellation scope disposed no handler registered',
     },
     {
         slug: 'notifications',
@@ -34,7 +34,7 @@ export const SEARCH_INDEX = [
     {
         slug: 'behaviors',
         title: 'Pipeline Behaviors',
-        keywords: 'IPipelineBehavior cross-cutting logging validation caching middleware pipeline order',
+        keywords: 'IPipelineBehavior cross-cutting logging validation caching middleware pipeline order open generic closed generic single request type scope',
     },
     {
         slug: 'notification-behaviors',
@@ -44,12 +44,12 @@ export const SEARCH_INDEX = [
     {
         slug: 'stream-behaviors',
         title: 'Stream Behaviors',
-        keywords: 'IStreamBehavior wrap stream IAsyncEnumerable enumerator cancellation',
+        keywords: 'IStreamBehavior wrap stream IAsyncEnumerable enumerator cancellation filter transform items',
     },
     {
         slug: 'auto-registration',
         title: 'Auto-Registration',
-        keywords: 'source generator AutoRegisterRequestHandlers AutoRegisterStreamHandlers automatically register handlers records multiple interfaces nested internal abstract generic C# 7.3 netstandard2.0 sdk requirements generated code',
+        keywords: 'source generator AutoRegisterRequestHandlers AutoRegisterStreamHandlers automatically register handlers records multiple interfaces nested internal abstract generic C# 7.3 netstandard2.0 sdk requirements generated code class library project reference analyzer per project AddApplication',
     },
     {
         slug: 'migrating-to-2',

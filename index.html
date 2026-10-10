@@ -3,23 +3,54 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" type="image/svg+xml" href="/mediatrr.svg" />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
 
     <title>MediatRR — A mediator for .NET that doesn't get in your way</title>
-    <meta name="description" content="MediatRR is a MIT-licensed mediator library for .NET with request/response, streams, asynchronous notifications, retry policies, and a dead-letter queue. Drop-in for Microsoft.Extensions.DependencyInjection." />
+    <meta name="description" content="MediatRR is a free, MIT-licensed mediator for .NET: request/response, streams and asynchronous notifications with retry policies, backpressure and a dead-letter queue, built on Microsoft.Extensions.DependencyInjection." />
     <meta name="theme-color" content="#0f172a" />
     <link rel="canonical" href="https://mediatrr.tech/" />
 
     <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="MediatRR" />
     <meta property="og:url" content="https://mediatrr.tech/" />
     <meta property="og:title" content="MediatRR — A mediator for .NET that doesn't get in your way" />
-    <meta property="og:description" content="Request/response, streams, async notifications with retry policies and a dead-letter queue. MIT-licensed, drop-in for Microsoft.Extensions.DependencyInjection." />
-    <meta property="og:image" content="https://mediatrr.tech/mediatrr.svg" />
+    <meta property="og:description" content="Request/response, streams and asynchronous notifications with retry policies, backpressure and a dead-letter queue. MIT-licensed, free forever, drop-in for Microsoft.Extensions.DependencyInjection." />
+    <meta property="og:image" content="https://mediatrr.tech/og-image.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="MediatRR logo with the tagline: a mediator for .NET that doesn't get in your way" />
 
-    <meta name="twitter:card" content="summary" />
-    <meta name="twitter:title" content="MediatRR — A mediator for .NET" />
-    <meta name="twitter:description" content="Request/response, streams, async notifications with retry policies and a dead-letter queue. MIT-licensed." />
-    <meta name="twitter:image" content="https://mediatrr.tech/mediatrr.svg" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="MediatRR — A mediator for .NET that doesn't get in your way" />
+    <meta name="twitter:description" content="Request/response, streams and asynchronous notifications with retry policies, backpressure and a dead-letter queue. MIT-licensed, free forever." />
+    <meta name="twitter:image" content="https://mediatrr.tech/og-image.png" />
+
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "SoftwareSourceCode",
+        "name": "MediatRR",
+        "url": "https://mediatrr.tech",
+        "codeRepository": "https://github.com/shakibstu/MediatRR",
+        "programmingLanguage": "C#",
+        "runtimePlatform": ".NET Standard 2.0",
+        "license": "https://opensource.org/licenses/MIT",
+        "description": "A free, MIT-licensed mediator for .NET with request/response, streams and resilient asynchronous notifications."
+      }
+    </script>
+    <script>
+      try {
+        var storedTheme = localStorage.getItem('mediatrr-theme');
+        if (storedTheme === 'light' || storedTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', storedTheme);
+        }
+      } catch (error) {
+        void error;
+      }
+    </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
