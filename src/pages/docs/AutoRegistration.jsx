@@ -1,16 +1,18 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import CodeBlock from '../../components/CodeBlock';
+import H2 from '../../components/DocHeading';
+import Callout from '../../components/Callout';
 
 const AutoRegistration = () => {
     const basicUsageCode = `using MediatRR.ServiceGenerator;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Auto-register all request handlers in the assembly
+// Auto-register all request handlers in this project
 builder.Services.AutoRegisterRequestHandlers();
 
-// Auto-register all stream handlers in the assembly
+// Auto-register all stream handlers in this project
 builder.Services.AutoRegisterStreamHandlers();
 
 var app = builder.Build();`;
@@ -50,23 +52,42 @@ namespace MediatRR.ServiceGenerator
     }
 }`;
 
+    const multiProjectCode = `// MyApp.Application (class library with the handlers)
+using MediatRR.ServiceGenerator;
+using Microsoft.Extensions.DependencyInjection;
+
+public static class ApplicationServiceCollectionExtensions
+{
+    public static IServiceCollection AddApplication(this IServiceCollection services)
+        => services.AutoRegisterRequestHandlers().AutoRegisterStreamHandlers();
+}
+
+// MyApp.Web (the host)
+builder.Services.AddMediatRR(cfg => { }, deadLetters);
+builder.Services.AddApplication();`;
+
+    const overrideCode = `builder.Services.AutoRegisterRequestHandlers();
+
+// Override a specific handler with a custom implementation
+builder.Services.AddRequestHandler<GetUserQuery, User, CachedGetUserQueryHandler>();`;
+
     return (
         <div>
             <h1>Auto-Registration</h1>
-            <p>
-                MediatRR includes a source generator that automatically discovers and registers all
-                request and stream handlers in your assembly. This eliminates the need for manual registration
-                and reduces boilerplate code.
+            <p className="doc-lead">
+                MediatRR includes a source generator that discovers and registers all request and stream
+                handlers in a project. This eliminates manual registration and the assembly scanning other
+                libraries do at start-up.
             </p>
 
-            <h2>How It Works</h2>
+            <H2>How It Works</H2>
             <p>
                 The source generator scans your code at compile time, finds the classes that
                 implement <code>IRequestHandler&lt;TRequest, TResponse&gt;</code> or{' '}
                 <code>IStreamRequestHandler&lt;TRequest, TResponse&gt;</code>, and generates registration code
                 automatically. It registers:
             </p>
-            <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem' }}>
+            <ul>
                 <li>Non-abstract, non-generic classes and records</li>
                 <li>Every handler interface a class implements, so one class can handle several request types</li>
                 <li>Nested classes, as long as the class and every class it is nested in are public or internal</li>
@@ -77,27 +98,46 @@ namespace MediatRR.ServiceGenerator
                 retry policy.
             </p>
 
-            <h2>Usage</h2>
+            <H2>Usage</H2>
             <p>
-                Simply call <code>AutoRegisterRequestHandlers()</code> or <code>AutoRegisterStreamHandlers()</code> on your service collection:
+                Call <code>AutoRegisterRequestHandlers()</code> or <code>AutoRegisterStreamHandlers()</code> on your service collection:
             </p>
             <CodeBlock code={basicUsageCode} />
 
-            <h2>Creating Handlers</h2>
+            <H2>Creating Handlers</H2>
             <p>
                 Just implement <code>IRequestHandler</code> - no attributes or manual registration required:
             </p>
             <CodeBlock code={handlerCode} />
 
-            <h2>Generated Code</h2>
+            <H2>Generated Code</H2>
             <p>
                 Behind the scenes, the source generator creates extension methods that register all handlers.
                 Both methods always exist, even when there is nothing to register:
             </p>
             <CodeBlock code={generatedCode} />
 
-            <h2>Requirements</h2>
-            <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem' }}>
+            <H2>Handlers in Other Projects</H2>
+            <p>
+                The generator runs separately in every project that references the <code>MediatRR</code>{' '}
+                package, and the methods it generates are <code>internal</code> to that project and cover only
+                the handlers declared there. Analyzers do not flow through project references, so a class
+                library that contains handlers needs its own package reference and should expose its
+                registrations itself:
+            </p>
+            <CodeBlock code={multiProjectCode} />
+
+            <Callout variant="warning" title="One generated class per project">
+                <p>
+                    Calling <code>AutoRegisterRequestHandlers()</code> in the host registers the host's handlers
+                    only. If your handlers live in a class library and nothing calls that library's generated
+                    methods, <code>Send</code> throws <code>InvalidOperationException</code> for a missing handler
+                    at runtime.
+                </p>
+            </Callout>
+
+            <H2>Requirements</H2>
+            <ul>
                 <li>The generator ships inside the MediatRR package; there is nothing else to install</li>
                 <li>It runs on the .NET SDK 6.0.400 or later, or Visual Studio 2022 17.3 or later</li>
                 <li>
@@ -107,39 +147,27 @@ namespace MediatRR.ServiceGenerator
                 </li>
             </ul>
 
-            <h2>Benefits</h2>
-            <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem' }}>
-                <li><strong>Zero Boilerplate</strong>: No need to manually register each handler</li>
-                <li><strong>Compile-Time Safety</strong>: Registration happens at compile time, not runtime</li>
-                <li><strong>No Reflection</strong>: No assembly scanning at startup - faster application startup</li>
-                <li><strong>Automatic Discovery</strong>: New handlers are automatically registered when you add them</li>
-                <li><strong>Type Safe</strong>: All registrations are strongly typed</li>
+            <H2>Benefits</H2>
+            <ul>
+                <li><strong>Zero boilerplate</strong>: no need to manually register each handler</li>
+                <li><strong>Compile-time safety</strong>: registration happens at compile time, not runtime</li>
+                <li><strong>No reflection</strong>: no assembly scanning at startup, so applications start faster</li>
+                <li><strong>Automatic discovery</strong>: new handlers are registered as soon as you add them</li>
+                <li><strong>Type safe</strong>: all registrations are strongly typed</li>
             </ul>
 
-            <h2>Namespace</h2>
+            <H2>Namespace</H2>
             <p>
                 The auto-registration feature is available in the <code>MediatRR.ServiceGenerator</code> namespace:
             </p>
             <CodeBlock code="using MediatRR.ServiceGenerator;" language="csharp" />
 
-            <div className="card" style={{ marginTop: '2rem', background: 'rgba(16, 185, 129, 0.1)', borderColor: '#10b981' }}>
-                <h3>⚡ Performance Tip</h3>
-                <p style={{ marginBottom: 0 }}>
-                    Source generators run at compile time, so there's zero runtime overhead. This makes
-                    auto-registration faster than traditional assembly scanning approaches used by other
-                    mediator libraries.
-                </p>
-            </div>
-
-            <h2>Combining with Manual Registration</h2>
+            <H2>Combining with Manual Registration</H2>
             <p>
                 You can still manually register handlers if needed. A manual registration made after the
                 auto-registration call overrides the auto-registered handler:
             </p>
-            <CodeBlock code={`builder.Services.AutoRegisterRequestHandlers();
-
-// Override a specific handler with a custom implementation
-builder.Services.AddRequestHandler<GetUserQuery, User, CachedGetUserQueryHandler>();`} />
+            <CodeBlock code={overrideCode} />
         </div>
     );
 };

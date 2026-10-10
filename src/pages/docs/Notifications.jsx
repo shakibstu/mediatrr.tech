@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import CodeBlock from '../../components/CodeBlock';
+import H2 from '../../components/DocHeading';
+import Callout from '../../components/Callout';
 
 const Notifications = () => {
     const notificationCode = `public class OrderPlaced : INotification
@@ -44,10 +46,10 @@ services.AddNotificationHandler<OrderPlaced, LogOrderHandler>();`;
     const publishCode = `var mediator = provider.GetRequiredService<IMediator>();
 
 // Publish the notification - all handlers will be called
-await mediator.Publish(new OrderPlaced 
-{ 
-    OrderId = "ORD-12345", 
-    Amount = 99.99m 
+await mediator.Publish(new OrderPlaced
+{
+    OrderId = "ORD-12345",
+    Amount = 99.99m
 });`;
 
     const retryPolicyCode = `var retryPolicy = new NotificationRetryPolicy
@@ -66,41 +68,45 @@ services.AddNotificationHandler<OrderPlaced, UpdateInventoryHandler>(retryPolicy
     return (
         <div>
             <h1>Notifications</h1>
-            <p>
-                Notifications in MediatRR allow you to publish events to multiple handlers.
-                Unlike requests, notifications don't return a value and can have zero or more handlers.
+            <p className="doc-lead">
+                Notifications publish an event to every handler registered for it. Unlike requests they return
+                no value, can have zero or more handlers, and run on a background worker after{' '}
+                <code>Publish</code> has returned.
             </p>
 
-            <h2>Defining a Notification</h2>
+            <H2>Defining a Notification</H2>
             <p>
                 Create a class that implements <code>INotification</code>:
             </p>
             <CodeBlock code={notificationCode} />
 
-            <h2>Creating Handlers</h2>
+            <H2>Creating Handlers</H2>
             <p>
                 You can create multiple handlers for the same notification. Each handler will be executed
                 when the notification is published:
             </p>
             <CodeBlock code={handlersCode} />
 
-            <h2>Registering Handlers</h2>
+            <H2>Registering Handlers</H2>
             <p>
-                Register your notification handlers with the DI container. You can optionally provide a retry policy:
+                Register your notification handlers with the DI container. You can optionally provide a retry
+                policy. Notification handlers are not covered by{' '}
+                <Link to="/docs/auto-registration">auto-registration</Link>, because the registration also
+                carries the policy:
             </p>
             <CodeBlock code={registrationCode} />
 
-            <h2>Publishing Notifications</h2>
+            <H2>Publishing Notifications</H2>
             <p>
                 Use the <code>Publish</code> method to send notifications to all registered handlers:
             </p>
             <CodeBlock code={publishCode} />
 
-            <h2>Asynchronous Processing</h2>
+            <H2>Asynchronous Processing</H2>
             <p>
                 Notifications are processed asynchronously through a background worker. This means:
             </p>
-            <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem' }}>
+            <ul>
                 <li>
                     <code>Publish</code> runs the <Link to="/docs/notification-behaviors">notification behaviors</Link>,
                     queues the notification and returns; it does not wait for the handlers
@@ -123,17 +129,20 @@ services.AddNotificationHandler<OrderPlaced, UpdateInventoryHandler>(retryPolicy
                     <code>Publish</code> waits for room; pass a <code>CancellationToken</code> to bound the wait
                 </li>
                 <li>
+                    A notification with no registered handlers is not queued at all
+                </li>
+                <li>
                     Publishing a notification that has handlers after the host has stopped throws{' '}
                     <code>InvalidOperationException</code>
                 </li>
             </ul>
 
-            <h2>Retry Policies</h2>
+            <H2>Retry Policies</H2>
             <p>
                 A retry policy applies to every handler of its notification type, and each handler is retried
                 on its own:
             </p>
-            <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem' }}>
+            <ul>
                 <li>
                     A failing handler runs again after <code>DelayBetweenRetries</code>, up
                     to <code>MaxRetryAttempts</code> more times; its concurrency slot is free during the delay
@@ -156,20 +165,19 @@ services.AddNotificationHandler<OrderPlaced, UpdateInventoryHandler>(retryPolicy
             </ul>
             <CodeBlock code={retryPolicyCode} />
 
-            <div className="card" style={{ marginTop: '1.5rem', background: 'rgba(234, 179, 8, 0.08)', borderColor: 'rgba(234, 179, 8, 0.4)' }}>
-                <h3>⚠️ One policy per notification type</h3>
-                <p style={{ marginBottom: 0 }}>
+            <Callout variant="warning" title="One policy per notification type">
+                <p>
                     All handlers for the same notification share a single retry policy. Registering two
                     different policies for one notification type throws{' '}
                     <code>InvalidOperationException</code> when the worker starts. Registering the same (or an
                     equivalent) policy more than once is fine, and handlers registered without a policy never
                     conflict.
                 </p>
-            </div>
+            </Callout>
 
-            <h2>Shutdown</h2>
+            <H2>Shutdown</H2>
             <p>Stopping the host stops the worker in one of two ways:</p>
-            <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem' }}>
+            <ul>
                 <li>
                     <strong>Graceful</strong>: the worker stops accepting notifications, then waits for queued
                     notifications and running handlers, including pending retries, to finish
@@ -182,17 +190,16 @@ services.AddNotificationHandler<OrderPlaced, UpdateInventoryHandler>(retryPolicy
                 </li>
             </ul>
 
-            <div className="card" style={{ marginTop: '2rem', background: 'rgba(59, 130, 246, 0.1)', borderColor: 'var(--accent-secondary)' }}>
-                <h3>💡 Use Cases</h3>
-                <p style={{ marginBottom: '0.5rem' }}>Notifications are perfect for:</p>
-                <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem', marginBottom: 0 }}>
+            <Callout variant="tip" title="Use cases">
+                <p>Notifications are a good fit for:</p>
+                <ul>
                     <li>Event-driven architectures</li>
                     <li>Sending emails or push notifications</li>
                     <li>Updating multiple systems after an action</li>
                     <li>Logging and auditing</li>
                     <li>Cache invalidation</li>
                 </ul>
-            </div>
+            </Callout>
         </div>
     );
 };

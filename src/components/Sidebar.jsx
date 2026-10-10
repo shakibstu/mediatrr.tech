@@ -12,7 +12,7 @@ const Sidebar = ({ isOpen, onClose }) => {
             ref={ref}
             className={`sidebar ${isOpen ? 'open' : ''}`}
             aria-label="Documentation navigation"
-            aria-hidden={!isOpen && typeof window !== 'undefined' && window.matchMedia('(max-width: 768px)').matches}
+            aria-hidden={!isOpen && typeof window !== 'undefined' && window.matchMedia('(max-width: 900px)').matches}
         >
             <button className="sidebar-close-btn" onClick={onClose} aria-label="Close menu">&times;</button>
             {DOCS_SECTIONS.map((section) => (

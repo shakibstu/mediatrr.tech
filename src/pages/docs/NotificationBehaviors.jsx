@@ -1,6 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import CodeBlock from '../../components/CodeBlock';
+import H2 from '../../components/DocHeading';
+import Callout from '../../components/Callout';
 
 const NotificationBehaviors = () => {
     const notificationBehaviorCode = `// Wraps the Publish call, around queuing the notification
@@ -8,8 +10,8 @@ public class NotificationLoggingBehavior<TNotification> : INotificationBehavior<
     where TNotification : INotification
 {
     public async Task Handle(
-        TNotification notification, 
-        Func<Task> next, 
+        TNotification notification,
+        Func<Task> next,
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine($"Publishing {typeof(TNotification).Name}");
@@ -19,13 +21,13 @@ public class NotificationLoggingBehavior<TNotification> : INotificationBehavior<
 }`;
 
     const handlerBehaviorCode = `// Wraps each individual handler execution
-public class NotificationHandlerLoggingBehavior<TNotification> 
+public class NotificationHandlerLoggingBehavior<TNotification>
     : INotificationHandlerBehavior<TNotification>
     where TNotification : INotification
 {
     public async Task Handle(
-        TNotification notification, 
-        Func<Task> next, 
+        TNotification notification,
+        Func<Task> next,
         CancellationToken cancellationToken = default)
     {
         Console.WriteLine("Before handler execution");
@@ -35,11 +37,11 @@ public class NotificationHandlerLoggingBehavior<TNotification>
 }`;
 
     const registrationCode = `// Register notification behaviors
-services.AddTransient(typeof(INotificationBehavior<>), 
+services.AddTransient(typeof(INotificationBehavior<>),
     typeof(NotificationLoggingBehavior<>));
 
 // Register notification handler behaviors
-services.AddTransient(typeof(INotificationHandlerBehavior<>), 
+services.AddTransient(typeof(INotificationHandlerBehavior<>),
     typeof(NotificationHandlerLoggingBehavior<>));`;
 
     const executionOrderCode = `// Inside mediator.Publish(notification):
@@ -58,12 +60,12 @@ services.AddTransient(typeof(INotificationHandlerBehavior<>),
     return (
         <div>
             <h1>Notification Behaviors</h1>
-            <p>
+            <p className="doc-lead">
                 MediatRR provides two types of behaviors for notifications, allowing you to add
                 cross-cutting concerns at different levels of the notification pipeline.
             </p>
 
-            <h2>INotificationBehavior</h2>
+            <H2>INotificationBehavior</H2>
             <p>
                 <code>INotificationBehavior&lt;TNotification&gt;</code> wraps the publishing step. It runs once
                 per <code>Publish</code> call, inside <code>Publish</code>, around queuing the notification.
@@ -73,17 +75,16 @@ services.AddTransient(typeof(INotificationHandlerBehavior<>),
             </p>
             <CodeBlock code={notificationBehaviorCode} />
 
-            <div className="card" style={{ marginTop: '1rem', marginBottom: '2rem' }}>
-                <h4>Use Cases:</h4>
-                <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem', marginBottom: 0 }}>
+            <Callout variant="tip" title="Use cases">
+                <ul>
                     <li>Logging or auditing that a notification was published</li>
                     <li>Validating or enriching a notification before it is queued</li>
                     <li>Filtering: dropping notifications that should not be processed</li>
                     <li>Metrics on how often notifications are published</li>
                 </ul>
-            </div>
+            </Callout>
 
-            <h2>INotificationHandlerBehavior</h2>
+            <H2>INotificationHandlerBehavior</H2>
             <p>
                 <code>INotificationHandlerBehavior&lt;TNotification&gt;</code> wraps each individual
                 handler execution. It runs in the background worker, inside the notification's DI scope, once
@@ -93,59 +94,58 @@ services.AddTransient(typeof(INotificationHandlerBehavior<>),
             </p>
             <CodeBlock code={handlerBehaviorCode} />
 
-            <div className="card" style={{ marginTop: '1rem', marginBottom: '2rem' }}>
-                <h4>Use Cases:</h4>
-                <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem', marginBottom: 0 }}>
+            <Callout variant="tip" title="Use cases">
+                <ul>
                     <li>Per-handler logging and tracing</li>
                     <li>Performance tracking per handler</li>
                     <li>Per-handler error handling or enrichment</li>
                     <li>Setting up per-handler context, such as a correlation ID</li>
                 </ul>
-            </div>
+            </Callout>
 
-            <h2>Registration</h2>
+            <H2>Registration</H2>
             <p>
                 Register both types of behaviors as open generics:
             </p>
             <CodeBlock code={registrationCode} />
 
-            <h2>Execution Order</h2>
+            <H2>Execution Order</H2>
             <p>
                 The two behavior types run at different times. Behaviors of the same type run in the order they
                 are registered, the first one outermost:
             </p>
             <CodeBlock code={executionOrderCode} language="javascript" />
 
-            <div className="card" style={{ marginTop: '2rem', background: 'rgba(139, 92, 246, 0.1)', borderColor: 'var(--accent-primary)' }}>
-                <h3>🔑 Key Differences</h3>
-                <table style={{ width: '100%', marginTop: '1rem', color: 'var(--text-secondary)' }}>
+            <H2>Key Differences</H2>
+            <div className="table-wrap">
+                <table className="doc-table">
                     <thead>
-                        <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-                            <th style={{ textAlign: 'left', padding: '0.5rem' }}>Aspect</th>
-                            <th style={{ textAlign: 'left', padding: '0.5rem' }}>INotificationBehavior</th>
-                            <th style={{ textAlign: 'left', padding: '0.5rem' }}>INotificationHandlerBehavior</th>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>INotificationBehavior</th>
+                            <th>INotificationHandlerBehavior</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td style={{ padding: '0.5rem' }}>Execution</td>
-                            <td style={{ padding: '0.5rem' }}>Once per Publish</td>
-                            <td style={{ padding: '0.5rem' }}>Once per handler attempt</td>
+                            <td>Execution</td>
+                            <td>Once per Publish</td>
+                            <td>Once per handler attempt</td>
                         </tr>
                         <tr>
-                            <td style={{ padding: '0.5rem' }}>Runs in</td>
-                            <td style={{ padding: '0.5rem' }}>The Publish call, before the notification is queued</td>
-                            <td style={{ padding: '0.5rem' }}>The background worker, around each handler</td>
+                            <td>Runs in</td>
+                            <td>The Publish call, before the notification is queued</td>
+                            <td>The background worker, around each handler</td>
                         </tr>
                         <tr>
-                            <td style={{ padding: '0.5rem' }}>Exceptions</td>
-                            <td style={{ padding: '0.5rem' }}>Propagate to the Publish caller</td>
-                            <td style={{ padding: '0.5rem' }}>Retried with the handler, then dead-lettered</td>
+                            <td>Exceptions</td>
+                            <td>Propagate to the Publish caller</td>
+                            <td>Retried with the handler, then dead-lettered</td>
                         </tr>
                         <tr>
-                            <td style={{ padding: '0.5rem' }}>Best For</td>
-                            <td style={{ padding: '0.5rem' }}>Concerns about publishing itself</td>
-                            <td style={{ padding: '0.5rem' }}>Handler-specific concerns</td>
+                            <td>Best for</td>
+                            <td>Concerns about publishing itself</td>
+                            <td>Handler-specific concerns</td>
                         </tr>
                     </tbody>
                 </table>

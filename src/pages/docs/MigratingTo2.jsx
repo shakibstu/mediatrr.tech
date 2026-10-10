@@ -1,8 +1,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import CodeBlock from '../../components/CodeBlock';
-
-const cell = { padding: '0.5rem', verticalAlign: 'top' };
+import H2 from '../../components/DocHeading';
+import Callout from '../../components/Callout';
 
 const MigratingTo2 = () => {
     const updateCode = `dotnet add package MediatRR --version 2.0.0`;
@@ -36,80 +36,80 @@ catch (InvalidOperationException) // ChannelClosedException in 1.x
     return (
         <div>
             <h1>Migrating to 2.0</h1>
-            <p>
+            <p className="doc-lead">
                 MediatRR 2.0 reworks how notifications are processed and fixes how handlers are dispatched and
                 registered. The handler and behavior interfaces in <code>MediatRR.Contract</code> are unchanged,
                 so requests, streams and behaviors keep compiling as they are. Most applications only need the
                 steps below.
             </p>
 
-            <h2>Breaking Changes</h2>
-            <div className="card" style={{ overflowX: 'auto' }}>
-                <table className="doc-table" style={{ width: '100%', color: 'var(--text-secondary)', borderCollapse: 'collapse' }}>
+            <H2>Breaking Changes</H2>
+            <div className="table-wrap">
+                <table className="doc-table">
                     <thead>
-                        <tr style={{ borderBottom: '1px solid var(--border-color)' }}>
-                            <th style={{ ...cell, textAlign: 'left' }}>Area</th>
-                            <th style={{ ...cell, textAlign: 'left' }}>1.x</th>
-                            <th style={{ ...cell, textAlign: 'left' }}>2.0</th>
+                        <tr>
+                            <th>Area</th>
+                            <th>1.x</th>
+                            <th>2.0</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td style={cell}><code>AddMediatRR</code> taking a <code>MediatRRConfiguration</code></td>
-                            <td style={cell}>Public, but a host using it could not start</td>
-                            <td style={cell}>Removed; pass a configuration action and a dead-letter queue</td>
+                            <td><code>AddMediatRR</code> taking a <code>MediatRRConfiguration</code></td>
+                            <td>Public, but a host using it could not start</td>
+                            <td>Removed; pass a configuration action and a dead-letter queue</td>
                         </tr>
                         <tr>
-                            <td style={cell}>Retry</td>
-                            <td style={cell}>Re-ran every handler of the notification</td>
-                            <td style={cell}>Re-runs only the failing handler, in place</td>
+                            <td>Retry</td>
+                            <td>Re-ran every handler of the notification</td>
+                            <td>Re-runs only the failing handler, in place</td>
                         </tr>
                         <tr>
-                            <td style={cell}><code>DeadLettersInfo.AttemptCount</code></td>
-                            <td style={cell}>Number of retries</td>
-                            <td style={cell}>Total number of attempts; <code>0</code> when no handler ran</td>
+                            <td><code>DeadLettersInfo.AttemptCount</code></td>
+                            <td>Number of retries</td>
+                            <td>Total number of attempts; <code>0</code> when no handler ran</td>
                         </tr>
                         <tr>
-                            <td style={cell}>Handler behavior failure</td>
-                            <td style={cell}>Dead-lettered with a <code>null</code> message, never retried</td>
-                            <td style={cell}>Retried under the policy, dead-lettered with the message</td>
+                            <td>Handler behavior failure</td>
+                            <td>Dead-lettered with a <code>null</code> message, never retried</td>
+                            <td>Retried under the policy, dead-lettered with the message</td>
                         </tr>
                         <tr>
-                            <td style={cell}>Backpressure</td>
-                            <td style={cell}>None; a notification waiting 60 s for a slot was dead-lettered</td>
-                            <td style={cell}><code>Publish</code> waits when the queue and all handler slots are full</td>
+                            <td>Backpressure</td>
+                            <td>None; a notification waiting 60 s for a slot was dead-lettered</td>
+                            <td><code>Publish</code> waits when the queue and all handler slots are full</td>
                         </tr>
                         <tr>
-                            <td style={cell}><code>Publish</code> after shutdown</td>
-                            <td style={cell}><code>ChannelClosedException</code></td>
-                            <td style={cell}><code>InvalidOperationException</code></td>
+                            <td><code>Publish</code> after shutdown</td>
+                            <td><code>ChannelClosedException</code></td>
+                            <td><code>InvalidOperationException</code></td>
                         </tr>
                         <tr>
-                            <td style={cell}>Omitted retry policy</td>
-                            <td style={cell}>Counted as the default policy and conflicted with an explicit one</td>
-                            <td style={cell}>No opinion; the notification type uses its other handlers' policy</td>
+                            <td>Omitted retry policy</td>
+                            <td>Counted as the default policy and conflicted with an explicit one</td>
+                            <td>No opinion; the notification type uses its other handlers' policy</td>
                         </tr>
                         <tr>
-                            <td style={cell}>Invalid configuration</td>
-                            <td style={cell}>Accepted, or failed later</td>
-                            <td style={cell}><code>ArgumentOutOfRangeException</code> from <code>AddMediatRR</code></td>
+                            <td>Invalid configuration</td>
+                            <td>Accepted, or failed later</td>
+                            <td><code>ArgumentOutOfRangeException</code> from <code>AddMediatRR</code></td>
                         </tr>
                         <tr>
-                            <td style={cell}>Generated registration code</td>
-                            <td style={cell}>Required C# 10</td>
-                            <td style={cell}>Compiles as C# 7.3</td>
+                            <td>Generated registration code</td>
+                            <td>Required C# 10</td>
+                            <td>Compiles as C# 7.3</td>
                         </tr>
                         <tr>
-                            <td style={cell}>Package dependencies</td>
-                            <td style={cell}><code>Microsoft.Extensions.Hosting</code> 10.0.9</td>
-                            <td style={cell}>Microsoft.Extensions abstraction packages 8.0 or later</td>
+                            <td>Package dependencies</td>
+                            <td><code>Microsoft.Extensions.Hosting</code> 10.0.9</td>
+                            <td>Microsoft.Extensions abstraction packages 8.0 or later</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
-            <h2>Upgrade Steps</h2>
-            <ol style={{ color: 'var(--text-secondary)', marginLeft: '2rem' }}>
+            <H2>Upgrade Steps</H2>
+            <ol>
                 <li>
                     <p>Update the package, and <code>MediatRR.Contract</code> too if you reference it directly:</p>
                     <CodeBlock code={updateCode} language="bash" />
@@ -151,8 +151,17 @@ catch (InvalidOperationException) // ChannelClosedException in 1.x
                 </li>
             </ol>
 
-            <h2>Fixed in 2.0</h2>
-            <ul style={{ color: 'var(--text-secondary)', marginLeft: '2rem' }}>
+            <Callout variant="info" title="Multi-project solutions">
+                <p>
+                    The generated registration methods are internal to each project. If handlers live in a
+                    class library, give that project its own <code>MediatRR</code> package reference and call its
+                    generated methods from inside it, as shown
+                    in <Link to="/docs/auto-registration#handlers-in-other-projects">Auto-Registration</Link>.
+                </p>
+            </Callout>
+
+            <H2>Fixed in 2.0</H2>
+            <ul>
                 <li>Notification handlers keep their scoped dependencies until they finish; 1.x disposed the scope while handlers were still running</li>
                 <li>A handler that cannot be created, or a behavior that throws, no longer stops notification processing for the whole application</li>
                 <li>Shutdown honours the host's shutdown timeout, and abandoned notifications are dead-lettered instead of disappearing</li>
