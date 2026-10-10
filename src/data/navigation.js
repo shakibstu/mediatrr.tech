@@ -44,7 +44,19 @@ export const DOCS_SECTIONS = [
                 slug: 'notifications',
                 label: 'Notifications',
                 file: 'Notifications.jsx',
-                description: 'Publish events to several handlers with retry policies, backpressure, graceful shutdown and a dead-letter queue.',
+                description: 'Publish events to several handlers with retry policies, backoff, backpressure, graceful shutdown and a dead-letter queue.',
+            },
+            {
+                slug: 'dead-letter-handlers',
+                label: 'Dead Letter Handlers',
+                file: 'DeadLetterHandlers.jsx',
+                description: 'React to failed notifications with a typed IDeadLetterHandler that runs alongside the dead-letter queue.',
+            },
+            {
+                slug: 'ordered-notifications',
+                label: 'Ordered Notifications',
+                file: 'OrderedNotifications.jsx',
+                description: 'Handle notifications that share an ordering key strictly in publish order with IOrderedNotification.',
             },
             {
                 slug: 'behaviors',
@@ -73,13 +85,25 @@ export const DOCS_SECTIONS = [
                 slug: 'auto-registration',
                 label: 'Auto-Registration',
                 file: 'AutoRegistration.jsx',
-                description: 'Let the MediatRR source generator register request and stream handlers at compile time, without assembly scanning.',
+                description: 'Let the MediatRR source generator register request, stream and dead letter handlers at compile time, without assembly scanning.',
+            },
+            {
+                slug: 'metrics',
+                label: 'Metrics',
+                file: 'Metrics.jsx',
+                description: 'Observe the notification pipeline through System.Diagnostics.Metrics: queue depth, in-flight handlers, durations, retries and dead letters.',
             },
         ],
     },
     {
         title: 'Upgrade Guides',
         items: [
+            {
+                slug: 'whats-new-2-1',
+                label: "What's New in 2.1",
+                file: 'WhatsNew21.jsx',
+                description: 'Dead letter handlers, retry backoff and exception filtering, metrics and ordered notifications in MediatRR 2.1. No breaking changes.',
+            },
             {
                 slug: 'migrating-to-2',
                 label: 'Migrating to 2.0',

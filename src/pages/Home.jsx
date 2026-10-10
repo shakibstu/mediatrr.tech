@@ -120,7 +120,7 @@ const PIPELINE = [
         icon: Database,
         title: 'Dead-letter queue',
         code: 'DeadLettersInfo',
-        text: 'Whatever still fails is recorded with its last exception and attempt count. Nothing disappears silently.',
+        text: 'Whatever still fails is recorded with its exception, handler and attempt count, and a typed dead letter handler can react. Nothing disappears silently.',
     },
 ];
 
@@ -141,7 +141,7 @@ const FEATURES = [
         icon: Activity,
         color: 'green',
         title: 'Resilient notifications',
-        text: 'A background worker with per-handler retries, backpressure, graceful shutdown and a dead-letter queue, so failures never disappear silently.',
+        text: 'A background worker with per-handler retries and backoff, backpressure, graceful shutdown, a dead-letter queue, typed dead letter handlers and metrics, so failures never disappear silently.',
     },
     {
         icon: Layers,
@@ -153,7 +153,7 @@ const FEATURES = [
         icon: Boxes,
         color: 'blue',
         title: 'Registration without reflection',
-        text: 'A source generator discovers request and stream handlers at compile time, so start-up does no assembly scanning and the generated code compiles as C# 7.3.',
+        text: 'A source generator discovers request, stream and dead letter handlers at compile time, so start-up does no assembly scanning and the generated code compiles as C# 7.3.',
     },
     {
         icon: Scale,
@@ -304,15 +304,15 @@ const Home = () => {
                 <div className="cta-band">
                     <h2>Ready in a minute</h2>
                     <p>
-                        Install the package, register a handler and send your first request. Coming
-                        from 1.x? The upgrade guide lists every change.
+                        Install the package, register a handler and send your first request. Already on
+                        2.0? See what 2.1 adds without changing a line.
                     </p>
                     <div className="hero-actions">
                         <Link to="/docs/basic-usage" className="btn btn-primary">
                             Basic usage <ArrowRight size={18} />
                         </Link>
-                        <Link to="/docs/migrating-to-2" className="btn btn-secondary">
-                            Migrating to 2.0
+                        <Link to="/docs/whats-new-2-1" className="btn btn-secondary">
+                            What's new in 2.1
                         </Link>
                     </div>
                 </div>

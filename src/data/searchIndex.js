@@ -9,7 +9,7 @@ export const SEARCH_INDEX = [
     {
         slug: 'installation',
         title: 'Installation',
-        keywords: 'install setup nuget dotnet add package addmediatrr dead letter queue concurrentqueue configuration channel size max concurrent consumer aspnet core scope singleton lifetime requirements netstandard2.0 abstractions host hosted service worker StartAsync StopAsync backpressure validation ArgumentOutOfRangeException DeadLettersInfo AttemptCount LastAttemptedAt MediatRR.Contract packages using MediatRR',
+        keywords: 'install setup nuget dotnet add package addmediatrr dead letter queue concurrentqueue configuration channel size max concurrent consumer aspnet core scope singleton lifetime requirements netstandard2.0 abstractions host hosted service worker StartAsync StopAsync backpressure validation ArgumentOutOfRangeException DeadLettersInfo AttemptCount LastAttemptedAt HandlerType MediatRR.Contract packages using MediatRR DiagnosticSource',
     },
     {
         slug: 'basic-usage',
@@ -29,7 +29,17 @@ export const SEARCH_INDEX = [
     {
         slug: 'notifications',
         title: 'Notifications',
-        keywords: 'INotification INotificationHandler Publish events dead letter retry policy MaxRetryAttempts DelayBetweenRetries one policy per notification type background worker channel async per handler retry in place backpressure host required shutdown graceful forced StopAsync InvalidOperationException OperationCanceledException scope',
+        keywords: 'INotification INotificationHandler Publish events dead letter retry policy MaxRetryAttempts DelayBetweenRetries BackoffMultiplier MaxDelayBetweenRetries ShouldRetry exception filter transient exponential backoff GetRetryDelay one policy per notification type background worker channel async per handler retry in place backpressure host required shutdown graceful forced StopAsync InvalidOperationException OperationCanceledException scope',
+    },
+    {
+        slug: 'dead-letter-handlers',
+        title: 'Dead Letter Handlers',
+        keywords: 'IDeadLetterHandler DeadLetter AddDeadLetterHandler AutoRegisterDeadLetterHandlers failed notification typed push dead letter queue HandlerType AttemptCount LastAttemptedAt Exception same scope never retried outbox alert compensate 2.1',
+    },
+    {
+        slug: 'ordered-notifications',
+        title: 'Ordered Notifications',
+        keywords: 'IOrderedNotification OrderingKey ordered sequential per key partition in order publish order concurrency account aggregate FIFO backlog NotificationChannelSize null key 2.1',
     },
     {
         slug: 'behaviors',
@@ -49,7 +59,17 @@ export const SEARCH_INDEX = [
     {
         slug: 'auto-registration',
         title: 'Auto-Registration',
-        keywords: 'source generator AutoRegisterRequestHandlers AutoRegisterStreamHandlers automatically register handlers records multiple interfaces nested internal abstract generic C# 7.3 netstandard2.0 sdk requirements generated code class library project reference analyzer per project AddApplication',
+        keywords: 'source generator AutoRegisterRequestHandlers AutoRegisterStreamHandlers AutoRegisterDeadLetterHandlers automatically register handlers records multiple interfaces nested internal abstract generic C# 7.3 netstandard2.0 sdk requirements generated code class library project reference analyzer per project AddApplication',
+    },
+    {
+        slug: 'metrics',
+        title: 'Metrics',
+        keywords: 'metrics meter System.Diagnostics.Metrics IMeterFactory OpenTelemetry MeterListener MediatRRInstrumentation MeterName mediatrr.notifications.published mediatrr.notifications.queued mediatrr.handlers.in_flight mediatrr.handlers.duration mediatrr.handlers.retries mediatrr.dead_letters observability monitoring gauge counter histogram queue depth saturation 2.1',
+    },
+    {
+        slug: 'whats-new-2-1',
+        title: "What's New in 2.1",
+        keywords: 'whats new 2.1 2.1.0 release notes changelog upgrade additive no breaking changes dead letter handlers backoff ShouldRetry metrics ordered notifications generator',
     },
     {
         slug: 'migrating-to-2',

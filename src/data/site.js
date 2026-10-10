@@ -2,7 +2,7 @@ export const SITE_URL = 'https://mediatrr.tech';
 export const SITE_NAME = 'MediatRR';
 export const SITE_TAGLINE = "A mediator for .NET that doesn't get in your way";
 export const SITE_DESCRIPTION =
-    'MediatRR is a free, MIT-licensed mediator for .NET: request/response, streams and asynchronous notifications with retry policies, backpressure and a dead-letter queue, built on Microsoft.Extensions.DependencyInjection.';
+    'MediatRR is a free, MIT-licensed mediator for .NET: request/response, streams and asynchronous notifications with retry policies, backpressure, dead-letter handling, ordering and metrics, built on Microsoft.Extensions.DependencyInjection.';
 export const DOCS_INDEX_DESCRIPTION =
     'Install MediatRR, send your first request and learn how requests, streams, notifications and behaviors work.';
 

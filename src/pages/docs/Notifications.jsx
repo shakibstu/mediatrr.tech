@@ -65,6 +65,18 @@ services.AddNotificationHandler<OrderPlaced, UpdateInventoryHandler>(retryPolicy
 // UpdateInventoryHandler is not affected: it runs once.
 // A handler that fails 4 times is dead-lettered with AttemptCount = 4.`;
 
+    const backoffCode = `var retryPolicy = new NotificationRetryPolicy
+{
+    MaxRetryAttempts = 5,
+    DelayBetweenRetries = TimeSpan.FromSeconds(1),
+    BackoffMultiplier = 2,                              // 1s, 2s, 4s, 8s, 16s
+    MaxDelayBetweenRetries = TimeSpan.FromSeconds(10),  // ... but never more than 10s
+    ShouldRetry = ex => ex is TimeoutException or HttpRequestException
+};
+
+// The worker waits retryPolicy.GetRetryDelay(failedAttempt) after each failure.
+// An ArgumentException from a handler is dead-lettered at once: ShouldRetry says no.`;
+
     return (
         <div>
             <h1>Notifications</h1>
@@ -159,11 +171,43 @@ services.AddNotificationHandler<OrderPlaced, UpdateInventoryHandler>(retryPolicy
                 </li>
                 <li>When no handler of the notification type registers a policy, a failing handler is dead-lettered after its first attempt</li>
                 <li>
-                    A negative <code>MaxRetryAttempts</code> or <code>DelayBetweenRetries</code> throws{' '}
+                    A negative <code>MaxRetryAttempts</code>, <code>DelayBetweenRetries</code> or{' '}
+                    <code>MaxDelayBetweenRetries</code>, or a <code>BackoffMultiplier</code> below 1, throws{' '}
                     <code>ArgumentOutOfRangeException</code> when the handler is registered
                 </li>
             </ul>
             <CodeBlock code={retryPolicyCode} />
+
+            <H2>Backoff and Exception Filtering</H2>
+            <p>
+                Since 2.1 a policy can grow the delay between attempts and decide per exception whether a
+                retry is worth it:
+            </p>
+            <ul>
+                <li>
+                    <code>BackoffMultiplier</code> scales the delay after every retry. The default of <code>1</code>{' '}
+                    keeps it constant; <code>2</code> doubles it each time
+                </li>
+                <li>
+                    <code>MaxDelayBetweenRetries</code> caps a backed-off delay. <code>null</code>, the default, means
+                    no cap
+                </li>
+                <li>
+                    <code>ShouldRetry</code> is called with the exception. When it returns <code>false</code> the
+                    notification is dead-lettered immediately, with the attempts made so far. <code>null</code>,
+                    the default, retries every exception
+                </li>
+                <li>
+                    <code>GetRetryDelay(failedAttempt)</code> returns the delay the worker will wait after the
+                    given 1-based attempt, if you want to inspect or test a policy
+                </li>
+            </ul>
+            <CodeBlock code={backoffCode} />
+            <p>
+                All of these take part in the one-policy-per-type check below. Two policies whose{' '}
+                <code>ShouldRetry</code> delegates are different instances count as different policies, so
+                create the policy once and pass the same instance to every handler.
+            </p>
 
             <Callout variant="warning" title="One policy per notification type">
                 <p>
@@ -174,6 +218,20 @@ services.AddNotificationHandler<OrderPlaced, UpdateInventoryHandler>(retryPolicy
                     conflict.
                 </p>
             </Callout>
+
+            <H2>After the Last Attempt</H2>
+            <p>
+                A notification that still fails is written to the dead-letter queue passed
+                to <code>AddMediatRR</code> (see <Link to="/docs/installation#dead-letter-queue">Installation</Link>).
+                If you would rather be called than poll the queue, register
+                an <Link to="/docs/dead-letter-handlers"><code>IDeadLetterHandler</code></Link> for the
+                notification type. Both happen: the queue keeps every entry and the handler runs as well.
+            </p>
+            <p>
+                When notifications of one group must be handled in publish order, for example all events of
+                one account, implement <Link to="/docs/ordered-notifications"><code>IOrderedNotification</code></Link>{' '}
+                instead of <code>INotification</code>.
+            </p>
 
             <H2>Shutdown</H2>
             <p>Stopping the host stops the worker in one of two ways:</p>
@@ -186,7 +244,8 @@ services.AddNotificationHandler<OrderPlaced, UpdateInventoryHandler>(retryPolicy
                     <strong>Forced</strong>: if the host's shutdown timeout expires first, the worker cancels the
                     token passed to handlers and stops waiting. Handlers that observe the token, notifications
                     still waiting for a slot and notifications still queued are dead-lettered with an{' '}
-                    <code>OperationCanceledException</code>, so nothing is lost silently
+                    <code>OperationCanceledException</code>, so nothing is lost silently. Dead letter
+                    handlers are not invoked while the host is stopping; the queue is the record
                 </li>
             </ul>
 
