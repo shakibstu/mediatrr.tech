@@ -18,6 +18,10 @@ import Requests from './docs/Requests';
 import Streams from './docs/Streams';
 import StreamBehaviors from './docs/StreamBehaviors';
 import MigratingTo2 from './docs/MigratingTo2';
+import DeadLetterHandlers from './docs/DeadLetterHandlers';
+import OrderedNotifications from './docs/OrderedNotifications';
+import Metrics from './docs/Metrics';
+import WhatsNew21 from './docs/WhatsNew21';
 
 // Pair the data-driven nav with the actual React components.
 const PAGES = {
@@ -27,10 +31,14 @@ const PAGES = {
     'requests': Requests,
     'streams': Streams,
     'notifications': Notifications,
+    'dead-letter-handlers': DeadLetterHandlers,
+    'ordered-notifications': OrderedNotifications,
     'behaviors': Behaviors,
     'notification-behaviors': NotificationBehaviors,
     'stream-behaviors': StreamBehaviors,
     'auto-registration': AutoRegistration,
+    'metrics': Metrics,
+    'whats-new-2-1': WhatsNew21,
     'migrating-to-2': MigratingTo2,
 };
 

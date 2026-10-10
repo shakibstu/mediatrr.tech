@@ -13,11 +13,13 @@ const Introduction = () => {
                 MediatRR routes it to the handler through dependency injection.
             </p>
 
-            <Callout variant="new" title="MediatRR 2.0">
+            <Callout variant="new" title="MediatRR 2.1">
                 <p>
-                    Version 2.0 makes notification processing safer: handlers are retried individually, keep
-                    their DI scope until they finish, and the queue now pushes back when it is full. It
-                    contains breaking changes; see <Link to="/docs/migrating-to-2">Migrating to 2.0</Link>.
+                    Version 2.1 adds typed <Link to="/docs/dead-letter-handlers">dead letter handlers</Link>,
+                    retry backoff and exception filtering, <Link to="/docs/metrics">metrics</Link> and{' '}
+                    <Link to="/docs/ordered-notifications">ordered notifications</Link>, with no breaking
+                    changes. See <Link to="/docs/whats-new-2-1">What's New in 2.1</Link>. Coming from 1.x?
+                    Start with <Link to="/docs/migrating-to-2">Migrating to 2.0</Link>.
                 </p>
             </Callout>
 
@@ -39,8 +41,10 @@ const Introduction = () => {
                 <li><strong>Streams</strong>: return <code>IAsyncEnumerable&lt;T&gt;</code> from a handler and consume items as they are produced</li>
                 <li><strong>Notifications</strong>: publish an event to zero or more handlers on a background worker</li>
                 <li><strong>Behaviors</strong>: wrap requests, streams, publishing and individual notification handlers with cross-cutting concerns</li>
-                <li><strong>Resilience</strong>: per-handler retry policies, backpressure, graceful shutdown and a dead-letter queue</li>
-                <li><strong>Compile-time registration</strong>: a source generator registers request and stream handlers without assembly scanning</li>
+                <li><strong>Resilience</strong>: per-handler retry policies with backoff and exception filtering, backpressure, graceful shutdown, a dead-letter queue and typed dead letter handlers</li>
+                <li><strong>Ordering</strong>: notifications that share a key are handled in publish order while everything else stays concurrent</li>
+                <li><strong>Metrics</strong>: queue depth, in-flight handlers, durations, retries and dead letters through <code>System.Diagnostics.Metrics</code></li>
+                <li><strong>Compile-time registration</strong>: a source generator registers request, stream and dead letter handlers without assembly scanning</li>
                 <li><strong>Dependency injection</strong>: built on Microsoft.Extensions.DependencyInjection with predictable scoping</li>
             </ul>
 
@@ -60,8 +64,8 @@ const Introduction = () => {
                             <td><code>MediatRR</code></td>
                             <td>
                                 <code>IMediator</code>, <code>AddMediatRR</code> and the registration methods, the
-                                notification worker, retry policies, the dead-letter queue and the source generator.
-                                Depends on <code>MediatRR.Contract</code>.
+                                notification worker, retry policies, the dead-letter queue, metrics and the source
+                                generator. Depends on <code>MediatRR.Contract</code>.
                             </td>
                             <td>The composition root: your web app, worker service or host project</td>
                         </tr>
@@ -70,8 +74,10 @@ const Introduction = () => {
                             <td>
                                 Only the interfaces: <code>IRequest</code>, <code>IRequestHandler</code>,{' '}
                                 <code>IStreamRequest</code>, <code>IStreamRequestHandler</code>,{' '}
-                                <code>INotification</code>, <code>INotificationHandler</code>, the behavior
-                                interfaces and the <code>Void</code> type
+                                <code>INotification</code>, <code>IOrderedNotification</code>,{' '}
+                                <code>INotificationHandler</code>, <code>IDeadLetterHandler</code> with its{' '}
+                                <code>DeadLetter&lt;T&gt;</code> argument, the behavior interfaces and
+                                the <code>Void</code> type
                             </td>
                             <td>Projects that define messages and handlers, such as a domain or application layer, so they never depend on the runtime</td>
                         </tr>

@@ -29,6 +29,7 @@ const Footer = () => {
                     {gettingStarted.items.map((item) => (
                         <Link key={item.slug} to={`/docs/${item.slug}`} className="footer-link">{item.label}</Link>
                     ))}
+                    <Link to="/docs/whats-new-2-1" className="footer-link">What's New in 2.1</Link>
                     <Link to="/docs/migrating-to-2" className="footer-link">Migrating to 2.0</Link>
                 </div>
 
@@ -38,6 +39,7 @@ const Footer = () => {
                         <Link key={item.slug} to={`/docs/${item.slug}`} className="footer-link">{item.label}</Link>
                     ))}
                     <Link to="/docs/auto-registration" className="footer-link">Auto-Registration</Link>
+                    <Link to="/docs/metrics" className="footer-link">Metrics</Link>
                 </div>
 
                 <div className="footer-section">

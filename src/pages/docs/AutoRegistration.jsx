@@ -15,6 +15,9 @@ builder.Services.AutoRegisterRequestHandlers();
 // Auto-register all stream handlers in this project
 builder.Services.AutoRegisterStreamHandlers();
 
+// Auto-register all dead letter handlers in this project (2.1)
+builder.Services.AutoRegisterDeadLetterHandlers();
+
 var app = builder.Build();`;
 
     const handlerCode = `// Just implement IRequestHandler - no manual registration needed!
@@ -49,6 +52,12 @@ namespace MediatRR.ServiceGenerator
         {
             return services;
         }
+
+        internal static global::Microsoft.Extensions.DependencyInjection.IServiceCollection AutoRegisterDeadLetterHandlers(this global::Microsoft.Extensions.DependencyInjection.IServiceCollection services)
+        {
+            global::Microsoft.Extensions.DependencyInjection.ServiceCollectionServiceExtensions.AddTransient<global::MediatRR.Contract.Messaging.IDeadLetterHandler<global::MyApp.UserCreated>, global::MyApp.UserCreatedDeadLetterHandler>(services);
+            return services;
+        }
     }
 }`;
 
@@ -59,7 +68,7 @@ using Microsoft.Extensions.DependencyInjection;
 public static class ApplicationServiceCollectionExtensions
 {
     public static IServiceCollection AddApplication(this IServiceCollection services)
-        => services.AutoRegisterRequestHandlers().AutoRegisterStreamHandlers();
+        => services.AutoRegisterRequestHandlers().AutoRegisterStreamHandlers().AutoRegisterDeadLetterHandlers();
 }
 
 // MyApp.Web (the host)
@@ -75,16 +84,17 @@ builder.Services.AddRequestHandler<GetUserQuery, User, CachedGetUserQueryHandler
         <div>
             <h1>Auto-Registration</h1>
             <p className="doc-lead">
-                MediatRR includes a source generator that discovers and registers all request and stream
-                handlers in a project. This eliminates manual registration and the assembly scanning other
+                MediatRR includes a source generator that discovers and registers all request, stream and
+                dead letter handlers in a project. This eliminates manual registration and the assembly scanning other
                 libraries do at start-up.
             </p>
 
             <H2>How It Works</H2>
             <p>
                 The source generator scans your code at compile time, finds the classes that
-                implement <code>IRequestHandler&lt;TRequest, TResponse&gt;</code> or{' '}
-                <code>IStreamRequestHandler&lt;TRequest, TResponse&gt;</code>, and generates registration code
+                implement <code>IRequestHandler&lt;TRequest, TResponse&gt;</code>,{' '}
+                <code>IStreamRequestHandler&lt;TRequest, TResponse&gt;</code> or{' '}
+                <code>IDeadLetterHandler&lt;TNotification&gt;</code>, and generates registration code
                 automatically. It registers:
             </p>
             <ul>
@@ -95,12 +105,14 @@ builder.Services.AddRequestHandler<GetUserQuery, User, CachedGetUserQueryHandler
             <p>
                 Notification handlers are not auto-registered; register them
                 with <Link to="/docs/notifications">AddNotificationHandler</Link>, which also carries their
-                retry policy.
+                retry policy. <Link to="/docs/dead-letter-handlers">Dead letter handlers</Link> carry no
+                policy, so the generator registers them.
             </p>
 
             <H2>Usage</H2>
             <p>
-                Call <code>AutoRegisterRequestHandlers()</code> or <code>AutoRegisterStreamHandlers()</code> on your service collection:
+                Call <code>AutoRegisterRequestHandlers()</code>, <code>AutoRegisterStreamHandlers()</code> or{' '}
+                <code>AutoRegisterDeadLetterHandlers()</code> on your service collection:
             </p>
             <CodeBlock code={basicUsageCode} />
 
@@ -113,7 +125,7 @@ builder.Services.AddRequestHandler<GetUserQuery, User, CachedGetUserQueryHandler
             <H2>Generated Code</H2>
             <p>
                 Behind the scenes, the source generator creates extension methods that register all handlers.
-                Both methods always exist, even when there is nothing to register:
+                All three methods always exist, even when there is nothing to register:
             </p>
             <CodeBlock code={generatedCode} />
 

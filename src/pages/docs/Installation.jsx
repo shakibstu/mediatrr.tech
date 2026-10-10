@@ -37,8 +37,9 @@ await worker.StopAsync(CancellationToken.None); // drains the queue before retur
     const deadLetterCode = `while (deadLetters.TryDequeue(out var deadLetter))
 {
     logger.LogError(deadLetter.Exception,
-        "{Notification} failed after {Attempts} attempt(s) at {At}",
+        "{Notification} failed in {Handler} after {Attempts} attempt(s) at {At}",
         deadLetter.Message.GetType().Name,
+        deadLetter.HandlerType?.Name ?? "(no handler ran)",
         deadLetter.AttemptCount,
         deadLetter.LastAttemptedAt);
 }`;
@@ -66,8 +67,9 @@ var app = builder.Build();`;
             <CodeBlock code={installCode} language="bash" />
             <p>
                 MediatRR targets <code>netstandard2.0</code> and depends only on the Microsoft.Extensions
-                abstraction packages (version 8.0 or later) and <code>System.Threading.Channels</code>, so it
-                does not pull a hosting stack into your application. The source generator used
+                abstraction packages (version 8.0 or later), <code>System.Threading.Channels</code> and{' '}
+                <code>System.Diagnostics.DiagnosticSource</code>, so it does not pull a hosting stack into
+                your application. The source generator used
                 for <Link to="/docs/auto-registration">auto-registration</Link> ships in the same package.
             </p>
             <p>
@@ -163,6 +165,10 @@ var app = builder.Build();`;
                     <code>AttemptCount</code>: the total number of times the handler ran, including retries;{' '}
                     <code>0</code> when no handler ran, for example because a handler could not be created
                 </li>
+                <li>
+                    <code>HandlerType</code> (2.1): the handler that failed; <code>null</code> when no handler
+                    ran. For a failing dead letter handler it is that handler's type
+                </li>
                 <li><code>LastAttemptedAt</code>: the UTC time of the last attempt</li>
             </ul>
             <p>
@@ -170,6 +176,12 @@ var app = builder.Build();`;
                 <code>OperationCanceledException</code>, so you can investigate and reprocess them.
             </p>
             <CodeBlock code={deadLetterCode} />
+            <p>
+                Polling is optional. Since 2.1 you can also register
+                an <Link to="/docs/dead-letter-handlers"><code>IDeadLetterHandler&lt;TNotification&gt;</code></Link>{' '}
+                that is called with the typed notification as soon as it is dead-lettered. The queue still
+                records every entry either way.
+            </p>
 
             <H2>ASP.NET Core Integration</H2>
             <p>
@@ -181,8 +193,9 @@ var app = builder.Build();`;
             <Callout variant="tip" title="Skip the manual registrations">
                 <p>
                     With <Link to="/docs/auto-registration">auto-registration</Link> the source generator
-                    discovers every request and stream handler in the project at compile time, so the only
-                    handlers you register by hand are notification handlers and their retry policies.
+                    discovers every request, stream and dead letter handler in the project at compile time,
+                    so the only handlers you register by hand are notification handlers and their retry
+                    policies.
                 </p>
             </Callout>
         </div>
